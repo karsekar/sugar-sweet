@@ -53,9 +53,9 @@ dt_min = 2;
 
 date = '2018-11-23';
 
-cd(strcat('/Users/jen/Documents/StockerLab/Data/glycogen/',date))
-load(strcat('glycogen-',date,'-allXYs-jiggle-0p5.mat'),'D5');
-
+%cd(strcat('/Users/jen/Documents/StockerLab/Data/glycogen/',date))
+%load(strcat('glycogen-',date,'-allXYs-jiggle-0p5.mat'),'D5');
+load("glycogen-2018-11-23-allXYs-jiggle-0p5.mat",'D5');
 
 % 0. define growth rates of interest
 specificGrowthRate = 'log2';
@@ -203,8 +203,8 @@ c_bin_sems = c_bin_stds./sqrt(c_bin_counts);
 % 13. plot growth rate over time
 palette = {'DodgerBlue','GoldenRod'};
 
-yfp_color = rgb(palette(2));
-cfp_color = rgb(palette(1));
+yfp_color = 'y'; %rgb(palette(2));
+cfp_color = 'c'; %rgb(palette(1));
 xmark = 'o';
 
 figure(1)
@@ -253,9 +253,9 @@ dt_min = 2;
 date = '2018-11-23';
 %cd(strcat('/Users/jen/Documents/StockerLab/Data/glycogen/',date,'_xy02'))
 %load(strcat('glycogen-',date,'-earlyEdits-jiggle-0p5.mat'),'D5');
-cd(strcat('/Users/jen/Documents/StockerLab/Data/glycogen/',date))
-load(strcat('glycogen-',date,'-allXYs-jiggle-0p5.mat'),'D5');
-
+%cd(strcat('/Users/jen/Documents/StockerLab/Data/glycogen/',date))
+%load(strcat('glycogen-',date,'-allXYs-jiggle-0p5.mat'),'D5');
+load("glycogen-2018-11-23-allXYs-jiggle-0p5.mat",'D5');
 
 % 0. define time binning parameters
 specificBinning = 30; % in minutes
@@ -384,8 +384,8 @@ c_norm2 = c_norm/c_norm(1);
 % 12. plot growth rate over time
 palette = {'DodgerBlue','GoldenRod'};
 
-yfp_color = rgb(palette(2));
-cfp_color = rgb(palette(1));
+yfp_color = 'y'; %rgb(palette(2));
+cfp_color = 'c'; %rgb(palette(1));
 xmark = 'o';
 
 figure(1)
