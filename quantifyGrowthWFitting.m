@@ -84,12 +84,13 @@ trackNum = glycogen_data(:,12);      % col 12 = track number (not ID from partic
 
 cfp = glycogen_data(:,13);         % col 13 = mean CFP intensity
 yfp = glycogen_data(:,14); 
+frames = glycogen_data(:,9);
 
 % 3. calculate summary info
 dt_sec = dt_min * 60;
 
 %% calculate the summary info
-tracks = calculateGrowthRateUsingFitting_glycogen(volumes,isDrop,trackNum,dt_sec,cfp,yfp);
+tracks = calculateGrowthRateUsingFitting_glycogen(volumes,isDrop,trackNum,dt_sec,cfp,yfp,frames);
 
 %save the file in case we need to run again and don't want to redo this
 %section
@@ -103,14 +104,19 @@ load('tracks.mat');
 
 %find where growth rates are negative (shouldn't be cells)
 growthRatesAcrossTracks=cellfun(@(x) mean(x.growthRates), tracks);
-growthRateThreshold=0.05;
+growthRateThreshold=0.0;
 growthRatesAboveThreshold=find(growthRatesAcrossTracks>growthRateThreshold);
 
 figure;
 histogram(growthRatesAcrossTracks(growthRatesAboveThreshold));
 
+%find where the tracks are long enough
+minTime = 5; %units is hr
+maxDurationAcrossTracks=cellfun(@(x) x.time(end), tracks);
+tracksExceedingMinTime=find(maxDurationAcrossTracks > minTime);
+
 % 0. define fluorescence intensity threshold
-cfp_threshold = 102.1; %103.4;
+cfp_threshold = 103.4; %103.4;
 yfp_threshold = 111;
 
 %get the mean fluorescence datas
@@ -121,9 +127,9 @@ yfpAcrossTracks=cellfun(@(x) mean(x.yfp), tracks);
 cfpCellIndices = find((cfpAcrossTracks > cfp_threshold)&(cfpAcrossTracks < 350)); %based on histogram. looks like an outlier above 350. let's exclude that
 yfpCellIndices = find(yfpAcrossTracks > yfp_threshold);
 
-%only consider where growth rates are positive
-cfpCellIndices = intersect(cfpCellIndices,growthRatesAboveThreshold);
-yfpCellIndices = intersect(yfpCellIndices,growthRatesAboveThreshold);
+%only consider where growth rates are positive and times exceed the min
+cfpCellIndices = intersect(intersect(cfpCellIndices,growthRatesAboveThreshold),tracksExceedingMinTime);
+yfpCellIndices = intersect(intersect(yfpCellIndices,growthRatesAboveThreshold),tracksExceedingMinTime);
 
 %how many do we get with each gating?
 cfpNum=length(cfpCellIndices);
@@ -150,7 +156,7 @@ for i=1:cfpNum
 end
 title('CFP Extension Rates');
 xlabel('Time (h)');
-ylim([-0.5 1]);
+ylim([-0.05 0.1]);
 
 %then YFP
 
@@ -162,7 +168,7 @@ for i=1:yfpNum
 end
 title('YFP Extension Rates');
 xlabel('Time (h)');
-ylim([-0.5 1]);
+ylim([-0.05 0.1]);
 
 
 % clear isDrop volumes trackNum dt_min

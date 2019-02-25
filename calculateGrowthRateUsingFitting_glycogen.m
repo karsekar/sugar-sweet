@@ -3,7 +3,7 @@
 %adapted from Jen Nguyen's code by Karthik on 29.1.2019.
 
 %%
-function [tracks] = calculateGrowthRateUsingFitting_glycogen(volumes,isDrop,trackNum,dt_sec,cfp,yfp)
+function [tracks] = calculateGrowthRateUsingFitting_glycogen(volumes,isDrop,trackNum,dt_sec,cfp,yfp,frames)
 
 % input data:
 %        volumes     =  calculated va_vals (cubic um)
@@ -43,12 +43,19 @@ for i=1:length(tracks)
     %take the entire range
     if(isempty(tracks{i}.divisionOccurrences))
         tracks{i}.timeRange=1:length(tracks{i}.indices);
+        tracks{i}.frames=frames(tracks{i}.indices);
     elseif(tracks{i}.divisionOccurrences(1) > 3) %make sure the first division occurs far enough in
         tracks{i}.timeRange=1:(tracks{i}.divisionOccurrences(1)-2);
+        tempframes = frames(tracks{i}.indices);
+        tracks{i}.frames=tempframes(1:(tracks{i}.divisionOccurrences(1)-2));
     else
         tracks{i}.timeRange=1:length(tracks{i}.indices);
+        tracks{i}.frames=frames(tracks{i}.indices);
     end
     
+    %take the transpose
+    tracks{i}.frames=tracks{i}.frames';
+        
     %get the volumes of interest
     tracks{i}.volumesUntilDivision=tracks{i}.volumes(tracks{i}.timeRange);
     
